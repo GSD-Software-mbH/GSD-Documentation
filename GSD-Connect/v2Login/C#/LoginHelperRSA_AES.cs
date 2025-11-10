@@ -61,8 +61,9 @@ namespace GSD.REST_Lib
             byte[] encryptedResponse = EncryptAES(Encoding.UTF8.GetBytes(json), responseAesKey);
             byte[] encryptedResponseAesKey = clientRsa.Encrypt(responseAesKey, RSAEncryptionPadding.OaepSHA256);
 
-            // Gib beides Base64-kodiert als json zurück
-            return $"{{\"aesKey\":\"{Convert.ToBase64String(encryptedResponseAesKey)}\",\"data\":\"{Convert.ToBase64String(encryptedResponse)}\"}}";
+            // Base64-kodiert json erstellen
+            GetBase64PublicKey();
+            return $"{{\"aesKey\":\"{Convert.ToBase64String(encryptedResponseAesKey)}\",\"data\":\"{Convert.ToBase64String(encryptedResponse)}\",\"publicKey\":\"{Convert.ToBase64String(_rsaKeyPair.ExportSubjectPublicKeyInfo())}\"}}";
         }
 
         public static string DecryptResponse(string encryptedResponse)
